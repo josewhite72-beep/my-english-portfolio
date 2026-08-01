@@ -9,6 +9,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
 <style>
   :root{
     --indigo:#3E3373; --violet:#6E5CC4; --sky:#6FA8F5;
@@ -98,6 +99,10 @@
   .file-row input{flex:1; border:none; font-family:inherit; font-size:.86rem; padding:4px; background:transparent;}
   .detail-file{background:#fff; border:1.5px dashed var(--line); border-radius:14px; padding:16px; display:flex; align-items:center; gap:12px; margin-bottom:16px;}
   .detail-file .fico{font-size:1.8rem;}
+  .preview-frame{width:100%; height:420px; border:1.5px solid var(--line); border-radius:12px; background:#fff;}
+  .preview-docx{max-height:420px; overflow-y:auto; background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:16px; font-size:.86rem; line-height:1.6; color:var(--ink);}
+  .preview-docx img{max-width:100%;}
+  .preview-msg{font-size:.82rem; color:var(--ink-soft); background:#fff; border:1.5px dashed var(--line); border-radius:12px; padding:16px; text-align:center;}
   .toast{position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:var(--indigo); color:#fff; padding:11px 22px; border-radius:100px;
     font-size:.85rem; font-weight:600; box-shadow:0 10px 26px rgba(0,0,0,.3); z-index:80; opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease;}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
@@ -179,6 +184,7 @@
       <span class="fico" id="detailFileIcon">📄</span>
       <div><div style="font-weight:700;" id="detailFileName"></div><div class="sub" style="margin:0;" id="detailFileSize"></div></div>
     </div>
+    <div id="previewWrap" style="margin-bottom:16px;"></div>
     <div class="field"><label>Título</label><input type="text" id="d_titleEdit"></div>
     <div class="field"><label>Notas</label><textarea id="d_notesEdit" placeholder="Notas rápidas…"></textarea></div>
     <div class="modal-actions">
@@ -458,7 +464,37 @@ async function openDetail(id){
   document.getElementById('detailFileSize').textContent=m.fileBlob? fmtBytes(m.fileBlob.size):'';
   document.getElementById('d_titleEdit').value=m.title;
   document.getElementById('d_notesEdit').value=m.notes||'';
+  await renderPreview(m);
   document.getElementById('detailModal').classList.remove('hidden');
+}
+let currentPreviewUrl=null;
+async function renderPreview(m){
+  const wrap=document.getElementById('previewWrap');
+  if(currentPreviewUrl){ URL.revokeObjectURL(currentPreviewUrl); currentPreviewUrl=null; }
+  wrap.innerHTML='<div class="preview-msg">Cargando vista previa…</div>';
+  const ext=(m.fileName||'').split('.').pop().toLowerCase();
+  if(!m.fileBlob){ wrap.innerHTML='<div class="preview-msg">Sin archivo adjunto.</div>'; return; }
+  try{
+    if(ext==='pdf'){
+      currentPreviewUrl=URL.createObjectURL(m.fileBlob);
+      wrap.innerHTML=`<iframe class="preview-frame" src="${currentPreviewUrl}"></iframe>`;
+    } else if(ext==='html' || ext==='htm'){
+      currentPreviewUrl=URL.createObjectURL(m.fileBlob);
+      wrap.innerHTML=`<iframe class="preview-frame" src="${currentPreviewUrl}" sandbox="allow-same-origin"></iframe>`;
+    } else if(ext==='docx'){
+      if(typeof mammoth==='undefined'){
+        wrap.innerHTML='<div class="preview-msg">No se pudo cargar el conversor de Word (sin conexión). Usa Descargar.</div>';
+      } else {
+        const arrayBuffer=await m.fileBlob.arrayBuffer();
+        const result=await mammoth.convertToHtml({arrayBuffer});
+        wrap.innerHTML=`<div class="preview-docx">${result.value}</div>`;
+      }
+    } else {
+      wrap.innerHTML='<div class="preview-msg">Vista previa no disponible para este tipo de archivo. Usa Descargar.</div>';
+    }
+  } catch(err){
+    wrap.innerHTML='<div class="preview-msg">No se pudo generar la vista previa. Usa Descargar.</div>';
+  }
 }
 document.getElementById('detailDownload').addEventListener('click', async ()=>{
   const m=await idbGet('materials',detailId);
@@ -484,7 +520,12 @@ document.getElementById('detailDelete').addEventListener('click', async ()=>{
   showToast('Material eliminado');
   await refresh(); renderAll();
 });
-document.querySelectorAll('.modal-overlay').forEach(ov=>ov.addEventListener('click', e=>{ if(e.target===ov) ov.classList.add('hidden'); }));
+document.querySelectorAll('.modal-overlay').forEach(ov=>ov.addEventListener('click', e=>{
+  if(e.target===ov){
+    ov.classList.add('hidden');
+    if(ov.id==='detailModal' && currentPreviewUrl){ URL.revokeObjectURL(currentPreviewUrl); currentPreviewUrl=null; }
+  }
+}));
 
 /* ---------------- spine tabs ---------------- */
 document.getElementById('spine').addEventListener('click', e=>{

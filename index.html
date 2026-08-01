@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>My English Portfolio</title>
+<meta name="theme-color" content="#3E3373">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo:#3E3373;
+    --violet:#6E5CC4;
+    --sky:#6FA8F5;
+    --ink:#211B3D;
+    --ink-soft:#4A4468;
+    --paper:#FBFAFF;
+    --card-bg:rgba(255,255,255,.94);
+    --card-bg-hover:rgba(255,255,255,1);
+    --line:rgba(33,27,61,.09);
+    --shadow:0 10px 30px rgba(33,20,80,.18);
+    --radius:18px;
+    --tab-I:#FF8E72;
+    --tab-II:#2BC9A6;
+    --tab-III:#FFC145;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 8% 12%, rgba(255,255,255,.10), transparent 40%),
+      linear-gradient(135deg, var(--indigo) 0%, var(--violet) 52%, var(--sky) 100%);
+    background-attachment:fixed;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Fraunces',serif; margin:0;}
+
+  /* ---------- layout ---------- */
+  .app{display:flex; min-height:100vh;}
+  .spine{
+    width:64px; flex:0 0 64px;
+    display:flex; flex-direction:column; align-items:center;
+    padding-top:28px; gap:14px;
+    position:sticky; top:0; height:100vh;
+  }
+  .tab{
+    writing-mode:vertical-rl; text-orientation:mixed;
+    border:none; cursor:pointer;
+    padding:18px 8px; border-radius:0 12px 12px 0;
+    font-family:'Fraunces',serif; font-weight:600; font-size:.82rem;
+    letter-spacing:.04em;
+    color:var(--ink); background:rgba(255,255,255,.55);
+    box-shadow:0 4px 12px rgba(20,10,50,.15);
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+    transform:translateX(-6px);
+  }
+  .tab:hover{transform:translateX(0);}
+  .tab.active{transform:translateX(0); box-shadow:0 6px 18px rgba(20,10,50,.32); color:#1a1430;}
+  .tab[data-trimester="all"]{background:rgba(255,255,255,.85); writing-mode:horizontal-tb; font-size:1.1rem; padding:12px;}
+  .tab[data-trimester="I"].active,.tab[data-trimester="I"]{background:var(--tab-I); }
+  .tab[data-trimester="II"].active,.tab[data-trimester="II"]{background:var(--tab-II); }
+  .tab[data-trimester="III"].active,.tab[data-trimester="III"]{background:var(--tab-III); }
+  .tab[data-trimester="I"]:not(.active){background:rgba(255,142,114,.55);}
+  .tab[data-trimester="II"]:not(.active){background:rgba(43,201,166,.55);}
+  .tab[data-trimester="III"]:not(.active){background:rgba(255,193,69,.55);}
+
+  main{flex:1; padding:28px 32px 100px; min-width:0;}
+
+  header.top{
+    display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
+    gap:16px; margin-bottom:22px;
+  }
+  .brand{display:flex; flex-direction:column; gap:4px;}
+  .brand .kicker{
+    color:rgba(255,255,255,.85); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700;
+  }
+  .brand h1{color:#fff; font-size:2rem; text-shadow:0 4px 18px rgba(20,10,60,.35);}
+  .storage-pill{
+    font-size:.72rem; color:rgba(255,255,255,.85); background:rgba(255,255,255,.14);
+    padding:5px 12px; border-radius:100px; width:fit-content; margin-top:2px;
+  }
+
+  .toolbar{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
+  .toolbar input[type="search"]{
+    padding:11px 14px; border-radius:100px; border:none; min-width:230px;
+    background:rgba(255,255,255,.92); font-family:inherit; font-size:.88rem; color:var(--ink);
+  }
+  .toolbar select{
+    padding:10px 14px; border-radius:100px; border:none; background:rgba(255,255,255,.92);
+    font-family:inherit; font-size:.85rem; color:var(--ink); cursor:pointer;
+  }
+  .icon-btn{
+    border:none; background:rgba(255,255,255,.2); color:#fff; padding:10px 14px;
+    border-radius:100px; cursor:pointer; font-size:.82rem; font-weight:600;
+  }
+  .icon-btn:hover{background:rgba(255,255,255,.32);}
+
+  /* ---------- gallery ---------- */
+  .gallery{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+    gap:18px;
+  }
+  .card{
+    background:var(--card-bg); border-radius:var(--radius); padding:0;
+    box-shadow:var(--shadow); cursor:pointer; overflow:hidden;
+    transition:transform .16s ease, box-shadow .16s ease;
+    display:flex; flex-direction:column;
+  }
+  .card:hover{transform:translateY(-4px); background:var(--card-bg-hover); box-shadow:0 16px 34px rgba(20,10,60,.28);}
+  .card-accent{height:8px; width:100%;}
+  .card-body{padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px; flex:1;}
+  .card-top{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .type-badge{
+    display:inline-flex; align-items:center; gap:6px; font-size:.72rem; font-weight:700;
+    padding:4px 10px; border-radius:100px; background:var(--paper); color:var(--ink-soft);
+  }
+  .grade-chip{font-size:.72rem; font-weight:700; color:var(--ink-soft); background:rgba(33,27,61,.06); padding:4px 9px; border-radius:100px;}
+  .card h3{font-size:1.08rem; line-height:1.25; color:var(--ink);}
+  .card .meta-line{font-size:.8rem; color:var(--ink-soft); line-height:1.4;}
+  .card .filename{
+    font-size:.72rem; color:var(--ink-soft); opacity:.75; margin-top:auto;
+    display:flex; align-items:center; gap:6px; padding-top:6px; border-top:1px dashed var(--line);
+  }
+
+  .empty-state{
+    grid-column:1/-1; text-align:center; padding:70px 20px; color:rgba(255,255,255,.92);
+  }
+  .empty-state h2{font-size:1.5rem; margin-bottom:8px;}
+  .empty-state p{opacity:.85; max-width:420px; margin:0 auto;}
+
+  /* ---------- fab ---------- */
+  .fab{
+    position:fixed; right:28px; bottom:28px; width:60px; height:60px; border-radius:50%;
+    border:none; background:linear-gradient(135deg,var(--tab-I),var(--tab-III));
+    color:#2a1a0f; font-size:1.7rem; font-weight:700; cursor:pointer;
+    box-shadow:0 12px 26px rgba(20,10,60,.4); z-index:20;
+    transition:transform .15s ease;
+  }
+  .fab:hover{transform:scale(1.06) rotate(90deg);}
+
+  /* ---------- modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(20,12,45,.55); backdrop-filter:blur(3px);
+    display:flex; align-items:center; justify-content:center; z-index:50; padding:20px;
+  }
+  .modal-overlay.hidden{display:none;}
+  .modal{
+    background:var(--paper); border-radius:22px; max-width:480px; width:100%;
+    max-height:88vh; overflow-y:auto; padding:26px 26px 22px; box-shadow:0 30px 60px rgba(0,0,0,.35);
+  }
+  .modal h2{font-size:1.35rem; margin-bottom:4px;}
+  .modal .sub{font-size:.82rem; color:var(--ink-soft); margin-bottom:18px;}
+  .field{display:flex; flex-direction:column; gap:6px; margin-bottom:14px;}
+  .field label{font-size:.76rem; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.03em;}
+  .field input, .field select, .field textarea{
+    padding:10px 12px; border-radius:10px; border:1.5px solid var(--line);
+    font-family:inherit; font-size:.9rem; background:#fff; color:var(--ink);
+  }
+  .field textarea{resize:vertical; min-height:60px;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .modal-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:8px;}
+  .btn{border:none; padding:11px 20px; border-radius:100px; font-family:inherit; font-weight:700; font-size:.85rem; cursor:pointer;}
+  .btn-primary{background:var(--indigo); color:#fff;}
+  .btn-primary:hover{background:#2c2456;}
+  .btn-ghost{background:transparent; color:var(--ink-soft);}
+  .btn-danger{background:#e5484d; color:#fff;}
+  .detail-file{
+    background:#fff; border:1.5px dashed var(--line); border-radius:14px; padding:16px;
+    display:flex; align-items:center; gap:12px; margin-bottom:16px;
+  }
+  .detail-file .fico{font-size:1.8rem;}
+  .detail-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; margin-bottom:14px;}
+  .detail-grid div{font-size:.85rem;}
+  .detail-grid .lbl{font-size:.68rem; font-weight:700; text-transform:uppercase; color:var(--ink-soft); letter-spacing:.03em; display:block; margin-bottom:2px;}
+  .toast{
+    position:fixed; bottom:100px; left:50%; transform:translateX(-50%);
+    background:var(--indigo); color:#fff; padding:11px 22px; border-radius:100px;
+    font-size:.85rem; font-weight:600; box-shadow:0 10px 26px rgba(0,0,0,.3); z-index:80;
+    opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
+
+  @media (max-width:640px){
+    main{padding:20px 14px 100px;}
+    .spine{width:48px; flex:0 0 48px;}
+    .brand h1{font-size:1.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="spine" id="spine">
+    <button class="tab active" data-trimester="all">Todo</button>
+    <button class="tab" data-trimester="I">Trimestre&nbsp;I</button>
+    <button class="tab" data-trimester="II">Trimestre&nbsp;II</button>
+    <button class="tab" data-trimester="III">Trimestre&nbsp;III</button>
+  </aside>
+
+  <main>
+    <header class="top">
+      <div class="brand">
+        <span class="kicker">PanaMentorLabs</span>
+        <h1>My English Portfolio</h1>
+        <span class="storage-pill" id="storagePill">Calculando espacio usado…</span>
+      </div>
+      <div class="toolbar">
+        <input type="search" id="searchInput" placeholder="Buscar título, scenario o theme…">
+        <select id="gradeFilter"><option value="">Grade: todos</option></select>
+        <select id="typeFilter"><option value="">Tipo: todos</option></select>
+        <button class="icon-btn" id="clearCacheBtn" title="Limpiar caché de la app">🗑 Caché</button>
+      </div>
+    </header>
+
+    <section class="gallery" id="gallery"></section>
+  </main>
+
+  <button class="fab" id="addBtn" title="Agregar material">+</button>
+</div>
+
+<!-- Add / Edit modal -->
+<div class="modal-overlay hidden" id="formOverlay">
+  <div class="modal">
+    <h2 id="formTitle">Agregar material</h2>
+    <div class="sub">Guarda el archivo real en este dispositivo (IndexedDB), sin nube.</div>
+    <form id="materialForm">
+      <div class="field">
+        <label>Título</label>
+        <input type="text" id="f_title" required placeholder="Ej. Family Members – Worksheet 2">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Trimestre</label>
+          <select id="f_trimester" required>
+            <option value="I">Trimestre I</option>
+            <option value="II">Trimestre II</option>
+            <option value="III">Trimestre III</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Grade</label>
+          <select id="f_grade" required>
+            <option>PreK</option><option>Kinder</option>
+            <option>1°</option><option>2°</option><option>3°</option>
+            <option>4°</option><option>5°</option><option>6°</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Scenario</label>
+          <input type="text" id="f_scenario" placeholder="Ej. My Family">
+        </div>
+        <div class="field">
+          <label>Theme</label>
+          <input type="text" id="f_theme" placeholder="Ej. Family Members">
+        </div>
+      </div>
+      <div class="field">
+        <label>Type</label>
+        <select id="f_type" required>
+          <option>Lesson Planner</option>
+          <option>Class Development</option>
+          <option>Class Assessment</option>
+          <option>Projects</option>
+          <option>Worksheet</option>
+          <option>Presentation (GPG)</option>
+          <option>Dialogue</option>
+          <option>Quiz</option>
+          <option>Otro</option>
+        </select>
+      </div>
+      <div class="field" id="fileFieldWrap">
+        <label>Archivo</label>
+        <input type="file" id="f_file">
+        <span class="sub" id="currentFileNote" style="margin:0;"></span>
+      </div>
+      <div class="field">
+        <label>Notas (opcional)</label>
+        <textarea id="f_notes" placeholder="Notas rápidas para ti mismo…"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="formCancel">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Detail modal -->
+<div class="modal-overlay hidden" id="detailOverlay">
+  <div class="modal">
+    <h2 id="detailTitleText"></h2>
+    <div class="sub" id="detailDateText"></div>
+    <div class="detail-file">
+      <span class="fico" id="detailFileIcon">📄</span>
+      <div>
+        <div style="font-weight:700;" id="detailFileName"></div>
+        <div class="sub" style="margin:0;" id="detailFileSize"></div>
+      </div>
+    </div>
+    <div class="detail-grid">
+      <div><span class="lbl">Trimestre</span><span id="d_trimester"></span></div>
+      <div><span class="lbl">Grade</span><span id="d_grade"></span></div>
+      <div><span class="lbl">Scenario</span><span id="d_scenario"></span></div>
+      <div><span class="lbl">Theme</span><span id="d_theme"></span></div>
+      <div><span class="lbl">Type</span><span id="d_type"></span></div>
+      <div><span class="lbl">Notas</span><span id="d_notes"></span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-danger" id="detailDelete">Eliminar</button>
+      <button class="btn btn-ghost" id="detailEdit">Editar</button>
+      <button class="btn btn-primary" id="detailDownload">Descargar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- IndexedDB layer ---------------- */
+const DB_NAME='myEnglishPortfolioDB', DB_VERSION=1, STORE='materials';
+let db;
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded=e=>{
+      const _db=e.target.result;
+      if(!_db.objectStoreNames.contains(STORE)){
+        const store=_db.createObjectStore(STORE,{keyPath:'id',autoIncrement:true});
+        store.createIndex('trimester','trimester');
+        store.createIndex('grade','grade');
+        store.createIndex('type','type');
+      }
+    };
+    req.onsuccess=e=>{db=e.target.result; resolve(db);};
+    req.onerror=e=>reject(e);
+  });
+}
+function txStore(mode='readonly'){ return db.transaction(STORE,mode).objectStore(STORE); }
+function addMaterial(data){ return new Promise((res,rej)=>{ const r=txStore('readwrite').add(data); r.onsuccess=()=>res(r.result); r.onerror=e=>rej(e); }); }
+function putMaterial(data){ return new Promise((res,rej)=>{ const r=txStore('readwrite').put(data); r.onsuccess=()=>res(r.result); r.onerror=e=>rej(e); }); }
+function deleteMaterial(id){ return new Promise((res,rej)=>{ const r=txStore('readwrite').delete(id); r.onsuccess=()=>res(); r.onerror=e=>rej(e); }); }
+function getAll(){ return new Promise((res,rej)=>{ const r=txStore().getAll(); r.onsuccess=()=>res(r.result); r.onerror=e=>rej(e); }); }
+function getOne(id){ return new Promise((res,rej)=>{ const r=txStore().get(id); r.onsuccess=()=>res(r.result); r.onerror=e=>rej(e); }); }
+
+/* ---------------- state ---------------- */
+let materials=[];
+let activeTrimester='all';
+let editingId=null;
+let detailId=null;
+
+const THEME_COLORS=['#FF8E72','#FFC145','#2BC9A6','#EF476F','#5B8DEF','#B892FF','#4CC9F0','#8AC926'];
+const TYPE_ICONS={
+  'Lesson Planner':'📘','Class Development':'🧑‍🏫','Class Assessment':'✅','Projects':'🚀',
+  'Worksheet':'📝','Presentation (GPG)':'🎞️','Dialogue':'💬','Quiz':'❓','Otro':'📄'
+};
+function colorForTheme(str){
+  if(!str) return THEME_COLORS[0];
+  let h=0; for(let i=0;i<str.length;i++){ h=str.charCodeAt(i)+((h<<5)-h); }
+  return THEME_COLORS[Math.abs(h)%THEME_COLORS.length];
+}
+function fileIconFor(name=''){
+  const ext=name.split('.').pop().toLowerCase();
+  if(ext==='pdf') return '📕';
+  if(ext==='docx'||ext==='doc') return '📄';
+  if(ext==='pptx'||ext==='ppt') return '🖥️';
+  if(ext==='xlsx'||ext==='xls'||ext==='csv') return '📊';
+  if(['png','jpg','jpeg','gif','webp','svg'].includes(ext)) return '🖼️';
+  if(ext==='html') return '🌐';
+  return '📎';
+}
+function fmtBytes(bytes){
+  if(!bytes) return '0 KB';
+  const kb=bytes/1024;
+  if(kb<1024) return kb.toFixed(0)+' KB';
+  return (kb/1024).toFixed(1)+' MB';
+}
+function fmtDate(ts){
+  return new Date(ts).toLocaleDateString('es-PA',{day:'2-digit',month:'short',year:'numeric'});
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ---------------- rendering ---------------- */
+function populateFilterOptions(){
+  const grades=[...new Set(materials.map(m=>m.grade))].sort();
+  const types=[...new Set(materials.map(m=>m.type))].sort();
+  const gSel=document.getElementById('gradeFilter');
+  const tSel=document.getElementById('typeFilter');
+  const curG=gSel.value, curT=tSel.value;
+  gSel.innerHTML='<option value="">Grade: todos</option>'+grades.map(g=>`<option value="${g}">${g}</option>`).join('');
+  tSel.innerHTML='<option value="">Tipo: todos</option>'+types.map(t=>`<option value="${t}">${t}</option>`).join('');
+  gSel.value=curG; tSel.value=curT;
+}
+
+function filteredMaterials(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  const grade=document.getElementById('gradeFilter').value;
+  const type=document.getElementById('typeFilter').value;
+  return materials.filter(m=>{
+    if(activeTrimester!=='all' && m.trimester!==activeTrimester) return false;
+    if(grade && m.grade!==grade) return false;
+    if(type && m.type!==type) return false;
+    if(q){
+      const hay=(m.title+' '+m.scenario+' '+m.theme).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  }).sort((a,b)=>b.dateAdded-a.dateAdded);
+}
+
+function renderGallery(){
+  const gallery=document.getElementById('gallery');
+  const list=filteredMaterials();
+  if(list.length===0){
+    gallery.innerHTML=`<div class="empty-state">
+      <h2>${materials.length===0 ? 'Tu portafolio está vacío' : 'Sin resultados'}</h2>
+      <p>${materials.length===0 ? 'Agrega tu primer material con el botón + de abajo a la derecha.' : 'Ajusta la búsqueda o los filtros para ver más materiales.'}</p>
+    </div>`;
+    return;
+  }
+  gallery.innerHTML=list.map(m=>{
+    const color=colorForTheme(m.theme||m.scenario||m.type);
+    return `<div class="card" data-id="${m.id}">
+      <div class="card-accent" style="background:${color};"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="type-badge">${TYPE_ICONS[m.type]||'📄'} ${m.type}</span>
+          <span class="grade-chip">${m.grade} · T${m.trimester}</span>
+        </div>
+        <h3>${escapeHtml(m.title)}</h3>
+        <div class="meta-line">${escapeHtml(m.scenario||'—')} ${m.theme? ' · '+escapeHtml(m.theme):''}</div>
+        <div class="filename">${fileIconFor(m.fileName)} ${escapeHtml(m.fileName||'sin archivo')} · ${fmtDate(m.dateAdded)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  [...gallery.querySelectorAll('.card')].forEach(card=>{
+    card.addEventListener('click',()=>openDetail(Number(card.dataset.id)));
+  });
+}
+function escapeHtml(s=''){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------------- storage pill ---------------- */
+async function updateStoragePill(){
+  const pill=document.getElementById('storagePill');
+  if(navigator.storage && navigator.storage.estimate){
+    const est=await navigator.storage.estimate();
+    pill.textContent=`${materials.length} materiales · ${fmtBytes(est.usage)} usados en este dispositivo`;
+  } else {
+    pill.textContent=`${materials.length} materiales guardados`;
+  }
+}
+
+/* ---------------- form modal (add/edit) ---------------- */
+const formOverlay=document.getElementById('formOverlay');
+document.getElementById('addBtn').addEventListener('click', ()=>openForm());
+document.getElementById('formCancel').addEventListener('click', ()=>formOverlay.classList.add('hidden'));
+
+function openForm(material=null){
+  editingId = material ? material.id : null;
+  document.getElementById('formTitle').textContent = material ? 'Editar material' : 'Agregar material';
+  document.getElementById('f_title').value = material?.title || '';
+  document.getElementById('f_trimester').value = material?.trimester || (activeTrimester!=='all'?activeTrimester:'I');
+  document.getElementById('f_grade').value = material?.grade || 'PreK';
+  document.getElementById('f_scenario').value = material?.scenario || '';
+  document.getElementById('f_theme').value = material?.theme || '';
+  document.getElementById('f_type').value = material?.type || 'Lesson Planner';
+  document.getElementById('f_notes').value = material?.notes || '';
+  document.getElementById('f_file').value = '';
+  document.getElementById('f_file').required = !material;
+  document.getElementById('currentFileNote').textContent = material ? `Archivo actual: ${material.fileName} (deja vacío para conservarlo)` : '';
+  formOverlay.classList.remove('hidden');
+}
+
+document.getElementById('materialForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const fileInput=document.getElementById('f_file');
+  const base={
+    title:document.getElementById('f_title').value.trim(),
+    trimester:document.getElementById('f_trimester').value,
+    grade:document.getElementById('f_grade').value,
+    scenario:document.getElementById('f_scenario').value.trim(),
+    theme:document.getElementById('f_theme').value.trim(),
+    type:document.getElementById('f_type').value,
+    notes:document.getElementById('f_notes').value.trim(),
+    dateAdded: editingId ? (await getOne(editingId)).dateAdded : Date.now()
+  };
+  if(fileInput.files[0]){
+    base.fileBlob=fileInput.files[0];
+    base.fileName=fileInput.files[0].name;
+    base.fileType=fileInput.files[0].type;
+  } else if(editingId){
+    const existing=await getOne(editingId);
+    base.fileBlob=existing.fileBlob; base.fileName=existing.fileName; base.fileType=existing.fileType;
+  }
+  if(editingId){ base.id=editingId; await putMaterial(base); showToast('Material actualizado'); }
+  else { await addMaterial(base); showToast('Material agregado'); }
+  formOverlay.classList.add('hidden');
+  await refresh();
+});
+
+/* ---------------- detail modal ---------------- */
+const detailOverlay=document.getElementById('detailOverlay');
+async function openDetail(id){
+  const m=await getOne(id);
+  if(!m) return;
+  detailId=id;
+  document.getElementById('detailTitleText').textContent=m.title;
+  document.getElementById('detailDateText').textContent='Agregado el '+fmtDate(m.dateAdded);
+  document.getElementById('detailFileIcon').textContent=fileIconFor(m.fileName);
+  document.getElementById('detailFileName').textContent=m.fileName||'—';
+  document.getElementById('detailFileSize').textContent=m.fileBlob? fmtBytes(m.fileBlob.size):'';
+  document.getElementById('d_trimester').textContent='Trimestre '+m.trimester;
+  document.getElementById('d_grade').textContent=m.grade;
+  document.getElementById('d_scenario').textContent=m.scenario||'—';
+  document.getElementById('d_theme').textContent=m.theme||'—';
+  document.getElementById('d_type').textContent=m.type;
+  document.getElementById('d_notes').textContent=m.notes||'—';
+  detailOverlay.classList.remove('hidden');
+}
+document.querySelectorAll('#detailOverlay .modal-actions').forEach(()=>{});
+document.getElementById('detailDownload').addEventListener('click', async ()=>{
+  const m=await getOne(detailId);
+  if(!m || !m.fileBlob) return;
+  const url=URL.createObjectURL(m.fileBlob);
+  const a=document.createElement('a');
+  a.href=url; a.download=m.fileName||'material';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+});
+document.getElementById('detailEdit').addEventListener('click', async ()=>{
+  const m=await getOne(detailId);
+  detailOverlay.classList.add('hidden');
+  openForm(m);
+});
+document.getElementById('detailDelete').addEventListener('click', async ()=>{
+  if(!confirm('¿Eliminar este material del portafolio? Esta acción no se puede deshacer.')) return;
+  await deleteMaterial(detailId);
+  detailOverlay.classList.add('hidden');
+  showToast('Material eliminado');
+  await refresh();
+});
+[formOverlay, detailOverlay].forEach(ov=>{
+  ov.addEventListener('click', e=>{ if(e.target===ov) ov.classList.add('hidden'); });
+});
+
+/* ---------------- filters / spine tabs ---------------- */
+document.getElementById('spine').addEventListener('click', e=>{
+  const btn=e.target.closest('.tab');
+  if(!btn) return;
+  activeTrimester=btn.dataset.trimester;
+  [...document.querySelectorAll('.tab')].forEach(t=>t.classList.toggle('active', t===btn));
+  renderGallery();
+});
+document.getElementById('searchInput').addEventListener('input', renderGallery);
+document.getElementById('gradeFilter').addEventListener('change', renderGallery);
+document.getElementById('typeFilter').addEventListener('change', renderGallery);
+
+/* ---------------- cache clear ---------------- */
+document.getElementById('clearCacheBtn').addEventListener('click', async ()=>{
+  if(!confirm('Esto limpia la caché de la app (no borra tus materiales guardados). ¿Continuar?')) return;
+  if('caches' in window){
+    const keys=await caches.keys();
+    await Promise.all(keys.map(k=>caches.delete(k)));
+  }
+  if(navigator.serviceWorker){
+    const regs=await navigator.serviceWorker.getRegistrations();
+    await Promise.all(regs.map(r=>r.unregister()));
+  }
+  showToast('Caché limpiada. Recargando…');
+  setTimeout(()=>location.reload(true),900);
+});
+
+/* ---------------- boot ---------------- */
+async function refresh(){
+  materials=await getAll();
+  populateFilterOptions();
+  renderGallery();
+  updateStoragePill();
+}
+(async function init(){
+  await openDB();
+  await refresh();
+})();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{/* offline-safe: fails silently on file:// */});
+  });
+}
+</script>
+</body>
+</html>

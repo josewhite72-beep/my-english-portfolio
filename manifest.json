@@ -1,0 +1,14 @@
+{
+  "name": "My English Portfolio",
+  "short_name": "MyEnglishPortfolio",
+  "description": "Portafolio de materiales de enseñanza organizados por Trimestre, Grade y Type — PanaMentorLabs",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#3E3373",
+  "theme_color": "#3E3373",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
